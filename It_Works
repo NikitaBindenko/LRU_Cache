@@ -1,0 +1,81 @@
+#include <iostream>
+#include <list>
+#include <map>
+
+using namespace std;
+
+class LRU
+{
+public:
+    list<string> cache;
+    int size;
+    map<string, list<string>::iterator> it;
+
+public:
+    LRU(int length)
+    {
+        cache = *new list<string>(length);
+        size = length;
+    }
+    int find_and_add(string& adress)
+    {
+        if (it.find(adress) == it.end()) 
+        {
+            // delete least recently used element
+            string last = cache.back();
+
+            // Pops the last elmeent
+            cache.pop_back();
+
+            // Erase the last
+            it.erase(last);
+            cache.push_front(adress);
+            it[adress] = cache.begin();
+                
+            return 0;
+        }
+        else     //если элемент есть в списке, то убираем его из конца списка и вставляем в начало
+        {
+            cache.erase(it[adress]);
+            cache.push_front(adress);
+            it[adress] = cache.begin();
+            return 1;
+        }
+    }
+    friend ostream& operator <<(ostream& os, list<string>& cache)
+    {
+
+        return os;
+    }
+    string& operator[] (const int index)
+    {
+        //использовать здесб итератор который скинул Миша
+    }
+};
+
+int main()
+{
+    LRU Check(4);
+
+    string check("qwe");
+    int qwe = Check.find_and_add(check);
+    cout << qwe;
+
+    check = "abc";
+    qwe = Check.find_and_add(check);
+    cout << qwe;
+
+    check = "zxc";
+    qwe = Check.find_and_add(check);
+    cout << qwe;
+
+    check = "tyu";
+    qwe = Check.find_and_add(check);
+    cout << qwe;
+
+    check = "abc";
+    qwe = Check.find_and_add(check);
+    cout << qwe;
+
+    return 0;
+}
