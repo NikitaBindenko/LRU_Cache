@@ -1,0 +1,77 @@
+#include <iostream>
+#include <list>
+#include <map>
+
+using namespace std;
+
+class LRU
+{
+public:
+    list<string> cache;
+    map<string, list<string>::iterator> search;
+
+public:
+    LRU(int length)
+    {
+        cache = *new list<string>(length);
+    }
+    int find_and_add(string& adress)
+    {
+        if (search.find(adress) == search.end())
+        {
+            // delete least recently used element
+            string last = cache.back();
+
+            // Pops the last element
+            cache.pop_back();
+
+            // Erase the last
+            search.erase(last);
+            cache.push_front(adress);
+            search[adress] = cache.begin();
+                
+            return 0;
+        }
+        else     //если элемент есть в списке, то убираем его из конца списка и вставляем в начало
+        {
+            cache.erase(search[adress]);
+            cache.push_front(adress);
+            search[adress] = cache.begin();
+            return 1;
+        }
+    }
+    friend ostream& operator <<(ostream& os, LRU& Cache)
+    {
+        for (auto it = Cache.cache.begin(); it != Cache.cache.end(); it++)
+        {
+            cout << (*it) << " ";
+        }
+        cout << endl;
+        return os;
+    }
+};
+
+int main()
+{
+    cout << "Input LRU size (int)" << endl;
+    int LRUsize;
+    cin >> LRUsize;
+    LRU Cache(LRUsize);
+    cout << endl;
+
+    string adress;
+    while (adress != "exit")
+    {
+        cout << "Input adress:" << endl;
+        cin >> adress;
+        if (adress == "exit")
+        {
+            break;
+        }
+        int result = Cache.find_and_add(adress);
+        cout << "result: " << result << endl;
+        cout << "\n" << Cache << endl;
+    }
+
+    return 0;
+}
